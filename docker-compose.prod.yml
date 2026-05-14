@@ -1,0 +1,15 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: deploy-app-prod
+    command: npm start
+    env_file:
+      - .env.production
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL}
+    ports:
+      - "${PORT:-3000}:3000"
+    restart: unless-stopped

@@ -1,0 +1,31 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: deploy-app-dev
+    command: npm run dev
+    env_file:
+      - .env.development
+    ports:
+      - "${PORT:-3000}:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - neon-local
+    restart: unless-stopped
+
+  neon-local:
+    image: neondatabase/neon_local:latest
+    container_name: deploy-neon-local
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env.development
+    environment:
+      NEON_API_KEY: ${NEON_API_KEY}
+      NEON_PROJECT_ID: ${NEON_PROJECT_ID}
+      PARENT_BRANCH_ID: ${PARENT_BRANCH_ID}
+      DELETE_BRANCH: ${DELETE_BRANCH:-true}
+    restart: unless-stopped
